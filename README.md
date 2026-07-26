@@ -1,62 +1,81 @@
-# African Startup Tracker
+# African Startup Ecosystem Tracker
 
-African Startup Tracker is a simple full-stack project for tracking startup funding across African markets. It includes:
+A full-stack data pipeline that scrapes, stores, and visualizes funding and activity data for startups across Africa — built to make sense of an ecosystem that's growing fast but is scattered across dozens of blogs, press releases, and databases with no single source of truth.
 
-- Spring Boot backend API with JPA data access
-- In-memory H2 database for local development (PostgreSQL supported)
-- Responsive frontend dashboard with chart visualizations
-- Python ingestion script for importing startup deals
+## Why this project
+
+I'm a Software Engineering student at WeThinkCode, and this project doubles as my portfolio piece for the Data Engineering elective. I wanted to build something that goes beyond a toy CRUD app — a real scrape → clean → store → API → dashboard pipeline, the kind of thing a data engineering team would actually run and maintain.
 
 ## What it does
 
-- Displays startup names, country, sector, and funding amounts
-- Renders investment distribution by country and sector
-- Seeds sample startup data automatically on startup
-- Supports developer-friendly local setup with H2 and optional PostgreSQL
+- **Scrapes** startup and funding data from public sources (news sites, press releases, ecosystem trackers)
+- **Cleans** and normalizes the data (deduplication, standardizing country/sector/funding-stage fields)
+- **Stores** it in PostgreSQL with a schema designed for querying by country, sector, funding stage, and time period
+- **Serves** it through a REST API built with Java Spring Boot
+- **Visualizes** it on a JavaScript dashboard — funding trends by country, sector breakdowns, growth over time
 
-## Backend setup
+## Tech stack
 
-1. Open a terminal and navigate to `backend`
-2. Run the application:
-   - Windows: `./mvnw.cmd spring-boot:run`
-   - macOS/Linux: `./mvnw spring-boot:run`
-3. The API will be available at `http://localhost:8080/startups`
+| Layer         | Tech                          |
+|---------------|-------------------------------|
+| Scraping      | Python                        |
+| Database      | PostgreSQL                    |
+| API           | Java, Spring Boot             |
+| Dashboard     | JavaScript                    |
 
-### Optional PostgreSQL profile
+## Architecture
 
-To run against PostgreSQL, create a database named `startup_db` and set the correct credentials in `backend/src/main/resources/application-postgres.properties`.
-
-Start with the profile:
-
-```bash
-./mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+[ Python scrapers ] --> [ Clean/normalize ] --> [ PostgreSQL ]
+                                                       |
+                                                       v
+                                          [ Spring Boot REST API ]
+                                                       |
+                                                       v
+                                          [ JS Dashboard (frontend) ]
 ```
 
-## Frontend setup
+## Getting started
 
-1. Open `frontend/index.html` in your browser, or serve the folder with a static file server.
-2. The dashboard fetches data from the backend and displays:
-   - startup table
-   - funding by country chart
-   - funding by sector chart
-   - summary metrics and filter controls
+> Setup steps below are placeholders — update with your actual commands once the project structure is finalized.
 
-## Ingestion script
+### Prerequisites
+- Python 3.x
+- Java 17+ and Maven
+- PostgreSQL
+- Node.js (for the dashboard)
 
-The ingestion workflow lives in `ingestion/scraper.py`. Install its dependencies with:
-
+### Scraper
 ```bash
-python -m pip install -r ingestion/requirements.txt
+cd scraper
+pip install -r requirements.txt
+python scrape.py
 ```
 
-Run the script with:
-
+### API
 ```bash
-python ingestion/scraper.py --url https://example.com
+cd api
+mvn spring-boot:run
 ```
 
-## Notes
+### Dashboard
+```bash
+cd dashboard
+npm install
+npm start
+```
 
-- By default, the backend uses an in-memory H2 database so the project works without additional setup.
-- Sample startup data is inserted at startup when the database is empty.
-- If you want to use PostgreSQL, enable the `postgres` Spring profile.
+## Project status
+
+🚧 In active development. Current focus: [scraping / API / dashboard — update to reflect where you're at]
+
+## Roadmap
+
+- [ ] Expand scraper coverage to more sources/countries
+- [ ] Add historical trend analysis
+- [ ] Deploy dashboard publicly
+- [ ] Add automated scraping schedule (cron/Airflow)
+
+## Author
+
+Built by Twanano Rikhotso — Software Engineering student at WeThinkCode.
