@@ -1,46 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>African Startup Tracker</title>
-
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- Chart.js -->
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">African Startup Tracker</p>
+          <h1>Startup funding dashboard</h1>
+          <p class="subtitle">
+            Explore African startup funding data, compare sectors, and track
+            investment distribution.
+          </p>
+        </div>
+        <div class="badge">Live demo</div>
+      </header>
 
-    <h1>African Startup Tracker</h1>
+      <section class="summary-grid" aria-label="Dashboard summary">
+        <article class="summary-card">
+          <span>Total startups</span>
+          <strong id="totalStartups">0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Total funding</span>
+          <strong id="totalFunding">$0</strong>
+        </article>
+        <article class="summary-card">
+          <span>Average raise</span>
+          <strong id="averageFunding">$0</strong>
+        </article>
+      </section>
 
-    <h2>Funding Table</h2>
+      <section class="controls-row">
+        <label class="search-group">
+          <span>Search startups</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search by company, country, or sector"
+          />
+        </label>
+        <p id="statusMessage" class="status-message">
+          Loading startup data from backend...
+        </p>
+      </section>
 
-    <table id="startupTable">
-        <thead>
-            <tr>
+      <section class="panel">
+        <h2>Startup dataset</h2>
+        <div class="table-wrapper">
+          <table id="startupTable" aria-label="Startup funding table">
+            <thead>
+              <tr>
                 <th>ID</th>
                 <th>Company</th>
                 <th>Country</th>
                 <th>Sector</th>
-                <th>Funding ($)</th>
-            </tr>
-        </thead>
+                <th>Funding</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
 
-        <tbody>
+      <section class="panel grid-two">
+        <div>
+          <div class="panel-header">
+            <h2>Funding by country</h2>
+            <p>Top investment destinations for tracked startups.</p>
+          </div>
+          <canvas id="countryChart" height="320"></canvas>
+        </div>
+        <div>
+          <div class="panel-header">
+            <h2>Funding by sector</h2>
+            <p>How investment is distributed across sectors.</p>
+          </div>
+          <canvas id="sectorChart" height="320"></canvas>
+        </div>
+      </section>
+    </div>
 
-        </tbody>
-    </table>
-
-    <h2>Funding by Country</h2>
-
-    <canvas id="countryChart"></canvas>
-
-    <script src="app.js"></script>
-
-</body>
-
+    <script src="app.js" defer></script>
+  </body>
 </html>

@@ -21,6 +21,13 @@ public class Startup {
     public Startup() {
     }
 
+    public Startup(String company, String country, String sector, Integer funding) {
+        this.company = company;
+        this.country = country;
+        this.sector = sector;
+        this.funding = funding;
+    }
+
     public Integer getId() {
         return id;
     }

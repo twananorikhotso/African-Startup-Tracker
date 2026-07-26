@@ -1,67 +1,115 @@
-import requests
+import argparse
 import re
+from dataclasses import dataclass
+from typing import List
+
+import requests
 from bs4 import BeautifulSoup
 import psycopg2
+from psycopg2.extras import execute_values
 
-url = "https://example.com"
 
-response = requests.get(url)
+@dataclass
+class StartupInfo:
+    company: str
+    country: str
+    sector: str
+    funding: int
+    source_url: str
 
-soup = BeautifulSoup(response.text, "html.parser")
 
-print(soup.title.text)
+def clean_funding(text: str) -> int:
+    digits = re.sub(r"[^0-9]", "", text or "")
+    return int(digits) if digits else 0
 
-def clean_funding(text):
-    numbers = re.sub(r'[^0-9]', '', text)
 
-    if numbers:
-        return int(numbers)
+def fetch_startups(url: str) -> List[StartupInfo]:
+    response = requests.get(url, timeout=15)
+    response.raise_for_status()
 
-    return 0
+    soup = BeautifulSoup(response.text, "html.parser")
+    startups = []
 
-print(clean_funding("$2,500,000"))
+    for card in soup.select(".startup-card, .deal-card, .company-card"):
+        company = card.select_one(".company-name, .name")
+        country = card.select_one(".country, .location")
+        sector = card.select_one(".sector, .category")
+        funding = card.select_one(".funding, .amount")
 
-startup = {
-    "company_name": "Paystack",
-    "country": "Nigeria",
-    "sector": "FinTech",
-    "funding": 200000000
-}
+        if not company:
+            continue
 
-print(startup)
+        startups.append(
+            StartupInfo(
+                company=company.get_text(strip=True),
+                country=(country.get_text(strip=True) if country else "Unknown"),
+                sector=(sector.get_text(strip=True) if sector else "Unknown"),
+                funding=clean_funding(funding.get_text(strip=True) if funding else "0"),
+                source_url=url,
+            )
+        )
 
-# database connection
-conn = psycopg2.connect(
-    host="localhost",
-    database="startup_db",
-    user="postgres",
-    password="LizzyMkansi@123"
-)
+    return startups
 
-cursor = conn.cursor() 
 
-# inserted Test Data
-cursor.execute(
-    """
-    INSERT INTO startups
-    (
-        company_name,
-        origin_country,
-        target_sector,
-        funding_amount,
-        source_url
+def save_startups(startups: List[StartupInfo], connection_string: str):
+    conn = psycopg2.connect(connection_string)
+    try:
+        with conn.cursor() as cursor:
+            execute_values(
+                cursor,
+                """
+                INSERT INTO startups (company, country, sector, funding)
+                VALUES %s
+                """,
+                [(s.company, s.country, s.sector, s.funding) for s in startups],
+            )
+            conn.commit()
+    finally:
+        conn.close()
+
+
+def seed_sample_startup(connection_string: str):
+    sample = StartupInfo(
+        company="Paystack",
+        country="Nigeria",
+        sector="FinTech",
+        funding=200000000,
+        source_url="https://example.com",
     )
-    VALUES (%s,%s,%s,%s,%s)
-    """,
-    (
-        "Paystack",
-        "Nigeria",
-        "FinTech",
-        200000000,
-        "https://example.com"
-    )
-)
+    save_startups([sample], connection_string)
+    print("Inserted sample startup data.")
 
-conn.commit()  #save changes
-cursor.close()  #Close connection
-conn.close()
+
+def build_connection_string(host: str, database: str, user: str, password: str) -> str:
+    return f"host={host} dbname={database} user={user} password={password}"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Scrape and ingest startup funding data.")
+    parser.add_argument("--url", help="Source website URL to scrape", default="https://example.com")
+    parser.add_argument("--host", help="PostgreSQL host", default="localhost")
+    parser.add_argument("--database", help="PostgreSQL database", default="startup_db")
+    parser.add_argument("--user", help="PostgreSQL user", default="postgres")
+    parser.add_argument("--password", help="PostgreSQL password", default="postgres")
+    parser.add_argument("--seed-sample", help="Seed sample startup data instead of scraping", action="store_true")
+    args = parser.parse_args()
+
+    connection_string = build_connection_string(args.host, args.database, args.user, args.password)
+
+    if args.seed_sample:
+        seed_sample_startup(connection_string)
+        return
+
+    print(f"Scraping startups from {args.url}")
+    startups = fetch_startups(args.url)
+    if not startups:
+        print("No startup entries were detected. Check the URL or update scraping selectors.")
+        return
+
+    save_startups(startups, connection_string)
+    print(f"Imported {len(startups)} startups into PostgreSQL.")
+
+
+if __name__ == "__main__":
+    main()
