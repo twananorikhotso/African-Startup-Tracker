@@ -10,12 +10,16 @@ public class Startup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "company_name")
     private String company;
-
+    
+    @Column(name = "origin_country")
     private String country;
 
+    @Column(name = "target_sector")
     private String sector;
 
+    @Column(name = "funding_amount")
     private Integer funding;
 
     public Startup() {
