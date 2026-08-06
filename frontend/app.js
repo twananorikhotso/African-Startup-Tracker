@@ -61,7 +61,7 @@ function groupBy(startups, key) {
   }, {});
 }
 
-function buildChart(canvasId, labels, values, title, color) {
+function buildChart(canvasId, labels, values, title) {
   const ctx = document.getElementById(canvasId).getContext("2d");
   if (canvasId === "countryChart" && countryChart) countryChart.destroy();
   if (canvasId === "sectorChart" && sectorChart) sectorChart.destroy();
