@@ -18,9 +18,37 @@ class StartupInfo:
     source_url: str
 
 
-def clean_funding(text: str) -> int:
-    digits = re.sub(r"[^0-9]", "", text or "")
-    return int(digits) if digits else 0
+def clean_funding(value: str | None) -> int:
+    if not value:
+        return 0
+
+    value = value.strip().upper()
+
+    if value in {"N/A", "UNDISCLOSED", "UNKNOWN"}:
+        return 0
+
+    try:
+        multiplier = 1
+
+        if value.endswith("K"):
+            multiplier = 1_000
+            value = value[:-1]
+        elif value.endswith("M"):
+            multiplier = 1_000_000
+            value = value[:-1]
+        elif value.endswith("B"):
+            multiplier = 1_000_000_000
+            value = value[:-1]
+
+        numeric_value = re.sub(r"[^0-9.]", "", value)
+
+        if not numeric_value:
+            return 0
+
+        return int(float(numeric_value) * multiplier)
+
+    except (ValueError, TypeError):
+        return 0
 
 
 def fetch_startups(url: str) -> List[StartupInfo]:
