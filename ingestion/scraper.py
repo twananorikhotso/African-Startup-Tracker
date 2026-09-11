@@ -24,11 +24,33 @@ def clean_funding(text: str) -> int:
 
 
 def fetch_startups(url: str) -> List[StartupInfo]:
-    response = requests.get(url, timeout=15)
-    response.raise_for_status()
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/152.0.0.0 Safari/537.36"
+        )
+    }
+
+    try:
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
+    except requests.RequestException as error:
+        print(f"Failed to fetch startup data: {error}")
+        return []
 
     soup = BeautifulSoup(response.text, "html.parser")
-    startups = []
+    
+    startup_links = soup.select('a[href^="/startups/"]')
+    print(f"Found {len(startup_links)} startup links")
+
+    for link in startup_links[:5]:
+        print(link.get_text(" ", strip=True))
+        print(link.get("href"))
+        print("---")
+        
+        return []
+        startups = []
 
     for card in soup.select(".startup-card, .deal-card, .company-card"):
         company = card.select_one(".company-name, .name")
