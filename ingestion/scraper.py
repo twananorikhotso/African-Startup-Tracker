@@ -44,13 +44,7 @@ def fetch_startups(url: str) -> List[StartupInfo]:
     startup_links = soup.select('a[href^="/startups/"]')
     print(f"Found {len(startup_links)} startup links")
 
-    for link in startup_links[:5]:
-        print(link.get_text(" ", strip=True))
-        print(link.get("href"))
-        print("---")
-        
-        return []
-        startups = []
+    startups = []
 
     for card in soup.select(".startup-card, .deal-card, .company-card"):
         company = card.select_one(".company-name, .name")
