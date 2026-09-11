@@ -5,16 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception exception) {
-        Map<String, Object> errorResponse = Map.of(
-                "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "message", "Unable to process request"
+    public ResponseEntity<ApiError> handleException(Exception exception) {
+        ApiError errorResponse = new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Unable to process request"
         );
 
         return ResponseEntity
