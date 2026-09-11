@@ -114,8 +114,13 @@ def save_startups(startups: List[StartupInfo], connection_string: str):
                 [(s.company, s.country, s.sector, s.funding) for s in startups],
             )
             conn.commit()
+            return True
 
-        return True
+    except psycopg2.Error as error:
+        conn.rollback()
+        print(f"Failed to save startup data: {error}")
+        return False
+
     finally:
         conn.close()
 
