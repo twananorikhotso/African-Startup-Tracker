@@ -97,7 +97,12 @@ def fetch_startups(url: str) -> List[StartupInfo]:
 
 
 def save_startups(startups: List[StartupInfo], connection_string: str):
-    conn = psycopg2.connect(connection_string)
+    try:
+        conn = psycopg2.connect(connection_string)
+    except psycopg2.Error as error:
+        print(f"Database connection failed: {error}")
+        return False
+
     try:
         with conn.cursor() as cursor:
             execute_values(
@@ -109,6 +114,8 @@ def save_startups(startups: List[StartupInfo], connection_string: str):
                 [(s.company, s.country, s.sector, s.funding) for s in startups],
             )
             conn.commit()
+
+        return True
     finally:
         conn.close()
 
@@ -121,8 +128,8 @@ def seed_sample_startup(connection_string: str):
         funding=200000000,
         source_url="https://example.com",
     )
-    save_startups([sample], connection_string)
-    print("Inserted sample startup data.")
+    if save_startups([sample], connection_string):
+        print("Inserted sample startup data.")
 
 
 def build_connection_string(host: str, database: str, user: str, password: str) -> str:
@@ -151,8 +158,8 @@ def main() -> None:
         print("No startup entries were detected. Check the URL or update scraping selectors.")
         return
 
-    save_startups(startups, connection_string)
-    print(f"Imported {len(startups)} startups into PostgreSQL.")
+    if save_startups(startups, connection_string):
+        print(f"Imported {len(startups)} startups into PostgreSQL.")
 
 
 if __name__ == "__main__":
