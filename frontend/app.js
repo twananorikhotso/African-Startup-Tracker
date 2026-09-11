@@ -142,14 +142,24 @@ async function loadStartups() {
     renderMetrics(allStartups);
     renderTable(allStartups);
     renderCharts(allStartups);
+
   } catch (error) {
     console.error(error);
-    statusMessage.textContent = "Unable to load data from backend. Make sure the backend is running at http://localhost:8080.";
+
+    allStartups = [];
+
+    statusMessage.textContent =
+        "Unable to load startup data. Please try again later.";
+
+    renderMetrics([]);
+
     tableBody.innerHTML = `
-      <tr>
-        <td colspan="5" class="empty-state">Cannot load startup data.</td>
-      </tr>
-    `;
+    <tr>
+      <td colspan="5" class="empty-state">
+        Cannot load startup data.
+      </td>
+    </tr>
+  `;
   }
 }
 
