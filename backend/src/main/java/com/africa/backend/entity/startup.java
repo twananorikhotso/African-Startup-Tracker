@@ -1,6 +1,9 @@
 package com.africa.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "startups")
@@ -10,15 +13,20 @@ public class Startup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Company name is required")
     @Column(name = "company_name")
     private String company;
-    
+
+    @NotBlank(message = "Country is required")
     @Column(name = "origin_country")
     private String country;
 
+    @NotBlank(message = "Sector is required")
     @Column(name = "target_sector")
     private String sector;
 
+    @NotNull(message = "Funding amount is required")
+    @Min(value = 0, message = "Funding amount cannot be negative")
     @Column(name = "funding_amount")
     private Integer funding;
 
