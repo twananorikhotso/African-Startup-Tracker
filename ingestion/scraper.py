@@ -83,7 +83,7 @@ def fetch_startups(url: str) -> List[StartupInfo]:
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
-    
+
     startup_links = soup.select('a[href^="/startups/"]')
     print(f"Found {len(startup_links)} startup links")
 
@@ -98,15 +98,19 @@ def fetch_startups(url: str) -> List[StartupInfo]:
         if not company:
             continue
 
-        startups.append(
-            StartupInfo(
-                company=company.get_text(strip=True),
-                country=(country.get_text(strip=True) if country else "Unknown"),
-                sector=(sector.get_text(strip=True) if sector else "Unknown"),
-                funding=clean_funding(funding.get_text(strip=True) if funding else "0"),
-                source_url=url,
-            )
+        startup = StartupInfo(
+            company=company.get_text(strip=True),
+            country=(country.get_text(strip=True) if country else "Unknown"),
+            sector=(sector.get_text(strip=True) if sector else "Unknown"),
+            funding=clean_funding(funding.get_text(strip=True) if funding else "0"),
+            source_url=url,
         )
+
+        if not startup.is_valid():
+            print(f"Skipping invalid startup: {startup}")
+            continue
+
+        startups.append(startup)
 
     return startups
 
@@ -148,6 +152,7 @@ def seed_sample_startup(connection_string: str):
         funding=200000000,
         source_url="https://example.com",
     )
+
     if save_startups([sample], connection_string):
         print("Inserted sample startup data.")
 
@@ -158,22 +163,38 @@ def build_connection_string(host: str, database: str, user: str, password: str) 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Scrape and ingest startup funding data.")
-    parser.add_argument("--url", help="Source website URL to scrape", default="https://example.com")
+    parser.add_argument(
+        "--url",
+        help="Source website URL to scrape",
+        default="https://example.com",
+    )
     parser.add_argument("--host", help="PostgreSQL host", default="localhost")
     parser.add_argument("--database", help="PostgreSQL database", default="startup_db")
     parser.add_argument("--user", help="PostgreSQL user", default="postgres")
     parser.add_argument("--password", help="PostgreSQL password", default="postgres")
-    parser.add_argument("--seed-sample", help="Seed sample startup data instead of scraping", action="store_true")
+    parser.add_argument(
+        "--seed-sample",
+        help="Seed sample startup data instead of scraping",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
-    connection_string = build_connection_string(args.host, args.database, args.user, args.password)
+    connection_string = build_connection_string(
+        args.host,
+        args.database,
+        args.user,
+        args.password,
+    )
 
     if args.seed_sample:
         seed_sample_startup(connection_string)
         return
 
     print(f"Scraping startups from {args.url}")
+
     startups = fetch_startups(args.url)
+
     if not startups:
         print("No startup entries were detected. Check the URL or update scraping selectors.")
         return
