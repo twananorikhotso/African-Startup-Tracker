@@ -2,6 +2,7 @@ package com.africa.backend.controller;
 
 import com.africa.backend.entity.Startup;
 import com.africa.backend.repository.StartupRepository;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class StartupController {
     }
 
     @PostMapping
-    public Startup createStartup(@RequestBody Startup startup) {
+    public Startup createStartup(@Valid @RequestBody Startup startup) {
         return startupRepository.save(startup);
     }
 }
