@@ -145,16 +145,36 @@ def save_startups(startups: List[StartupInfo], connection_string: str):
             execute_values(
                 cursor,
                 """
-                INSERT INTO startups (company, country, sector, funding)
+                INSERT INTO startups (
+                    company_name,
+                    origin_country,
+                    target_sector,
+                    funding_amount,
+                    source_url
+                )
                 VALUES %s
+                ON CONFLICT (LOWER(BTRIM(company_name)))
+                DO NOTHING
                 """,
-                [(s.company, s.country, s.sector, s.funding) for s in startups],
+                [
+                    (
+                        s.company,
+                        s.country,
+                        s.sector,
+                        s.funding,
+                        s.source_url,
+                    )
+                    for s in startups
+                ],
             )
+
+            inserted_count = cursor.rowcount
             conn.commit()
             logger.info(
-                "Successfully saved %d startup records",
-                len(startups),
-            )
+                "Saved %d new startup records; skipped %d duplicates",
+                inserted_count,
+                len(startups) - inserted_count,
+                )
             return True
 
     except psycopg2.Error as error:
@@ -176,7 +196,7 @@ def seed_sample_startup(connection_string: str):
     )
 
     if save_startups([sample], connection_string):
-        logger.info("Inserted sample startup data")
+        logger.info("Sample startup ingestion completed")
 
 
 def build_connection_string(
