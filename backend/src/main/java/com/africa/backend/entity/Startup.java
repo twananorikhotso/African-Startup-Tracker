@@ -28,12 +28,12 @@ public class Startup {
     @NotNull(message = "Funding amount is required")
     @Min(value = 0, message = "Funding amount cannot be negative")
     @Column(name = "funding_amount")
-    private Integer funding;
+    private Long funding;
 
     public Startup() {
     }
 
-    public Startup(String company, String country, String sector, Integer funding) {
+    public Startup(String company, String country, String sector, Long funding) {
         this.company = company;
         this.country = country;
         this.sector = sector;
@@ -72,11 +72,11 @@ public class Startup {
         this.sector = sector;
     }
 
-    public Integer getFunding() {
+    public Long getFunding() {
         return funding;
     }
 
-    public void setFunding(Integer funding) {
+    public void setFunding(Long funding) {
         this.funding = funding;
     }
 }
