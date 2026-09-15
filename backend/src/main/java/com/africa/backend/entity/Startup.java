@@ -14,20 +14,20 @@ public class Startup {
     private Integer id;
 
     @NotBlank(message = "Company name is required")
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false)
     private String company;
 
     @NotBlank(message = "Country is required")
-    @Column(name = "origin_country")
+    @Column(name = "origin_country", nullable = false)
     private String country;
 
     @NotBlank(message = "Sector is required")
-    @Column(name = "target_sector")
+    @Column(name = "target_sector", nullable = false)
     private String sector;
 
     @NotNull(message = "Funding amount is required")
     @Min(value = 0, message = "Funding amount cannot be negative")
-    @Column(name = "funding_amount")
+    @Column(name = "funding_amount", nullable = false)
     private Long funding;
 
     public Startup() {
