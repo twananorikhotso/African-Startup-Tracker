@@ -58,13 +58,30 @@ body {
   line-height: 1.65;
 }
 
-.badge {
-  background: #2563eb;
-  color: white;
-  padding: 0.85rem 1.2rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+.header-content {
+  max-width: 760px;
+}
+
+.data-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
 }
 
 .summary-grid {
