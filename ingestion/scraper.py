@@ -1,4 +1,5 @@
 import argparse
+import logging
 import re
 from dataclasses import dataclass
 from typing import List
@@ -8,6 +9,13 @@ from bs4 import BeautifulSoup
 import psycopg2
 from psycopg2.extras import execute_values
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class StartupInfo:
