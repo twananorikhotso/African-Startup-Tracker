@@ -1,99 +1,127 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>African Startup Tracker</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>African Startup Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-  <body>
-    <div class="page-shell">
-      <header class="topbar">
-        <div class="header-content">
-          <p class="eyebrow">African Startup Tracker</p>
+<body>
+<div class="page-shell">
+  <header class="topbar">
+    <div class="header-content">
+      <p class="eyebrow">African Startup Tracker</p>
 
-          <h1>African Startup Market Intelligence</h1>
+      <h1>African Startup Market Intelligence</h1>
 
-          <p class="subtitle">
-            Monitor startup funding activity across African markets, compare
-            investment by country and sector, and explore the companies shaping
-            the continent's innovation ecosystem.
-          </p>
-        </div>
-
-        <div class="data-status">
-          <span class="status-dot"></span>
-          <span>Market data dashboard</span>
-        </div>
-      </header>
-
-      <section class="summary-grid" aria-label="Dashboard summary">
-        <article class="summary-card">
-          <span>Total startups</span>
-          <strong id="totalStartups">0</strong>
-        </article>
-        <article class="summary-card">
-          <span>Total funding</span>
-          <strong id="totalFunding">$0</strong>
-        </article>
-        <article class="summary-card">
-          <span>Average raise</span>
-          <strong id="averageFunding">$0</strong>
-        </article>
-      </section>
-
-      <section class="controls-row">
-        <label class="search-group">
-          <span>Search startups</span>
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Search by company, country, or sector"
-          />
-        </label>
-        <p id="statusMessage" class="status-message">
-          Loading startup data from backend...
-        </p>
-      </section>
-
-      <section class="panel">
-        <h2>Startup dataset</h2>
-        <div class="table-wrapper">
-          <table id="startupTable" aria-label="Startup funding table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Company</th>
-                <th>Country</th>
-                <th>Sector</th>
-                <th>Funding</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="panel grid-two">
-        <div>
-          <div class="panel-header">
-            <h2>Funding by country</h2>
-            <p>Top investment destinations for tracked startups.</p>
-          </div>
-          <canvas id="countryChart" height="320"></canvas>
-        </div>
-        <div>
-          <div class="panel-header">
-            <h2>Funding by sector</h2>
-            <p>How investment is distributed across sectors.</p>
-          </div>
-          <canvas id="sectorChart" height="320"></canvas>
-        </div>
-      </section>
+      <p class="subtitle">
+        Monitor startup funding activity across African markets, compare
+        investment by country and sector, and explore the companies shaping
+        the continent's innovation ecosystem.
+      </p>
     </div>
 
-    <script src="app.js" defer></script>
-  </body>
+    <div class="data-status">
+      <span class="status-dot"></span>
+      <span>Market data dashboard</span>
+    </div>
+  </header>
+
+  <section class="summary-grid" aria-label="Market overview">
+    <article class="summary-card">
+      <div class="summary-card-header">
+        <span>Tracked startups</span>
+        <span class="metric-label">Companies</span>
+      </div>
+      <strong id="totalStartups">0</strong>
+      <p>Startups currently represented in the dataset</p>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-card-header">
+        <span>Total funding</span>
+        <span class="metric-label">USD</span>
+      </div>
+      <strong id="totalFunding">$0</strong>
+      <p>Combined disclosed funding across tracked companies</p>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-card-header">
+        <span>Average funding</span>
+        <span class="metric-label">Per startup</span>
+      </div>
+      <strong id="averageFunding">$0</strong>
+      <p>Average disclosed funding across the current dataset</p>
+    </article>
+  </section>
+
+  <section class="controls-row">
+    <label class="search-group">
+      <span>Search startups</span>
+      <input
+              id="searchInput"
+              type="search"
+              placeholder="Search by company, country, or sector"
+      />
+    </label>
+
+    <p id="statusMessage" class="status-message">
+      Loading startup data from backend...
+    </p>
+  </section>
+
+  <section class="panel">
+    <div class="dataset-header">
+      <div>
+        <h2>Startup dataset</h2>
+        <p>
+          Explore tracked companies, their markets, sectors, and disclosed
+          funding.
+        </p>
+      </div>
+
+      <span class="table-label">Funding in USD</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="startupTable" aria-label="Startup funding table">
+        <thead>
+        <tr>
+          <th>Company</th>
+          <th>Country</th>
+          <th>Sector</th>
+          <th class="funding-column">Funding</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel grid-two">
+    <div>
+      <div class="panel-header">
+        <h2>Funding by country</h2>
+        <p>Top investment destinations for tracked startups.</p>
+      </div>
+
+      <canvas id="countryChart" height="320"></canvas>
+    </div>
+
+    <div>
+      <div class="panel-header">
+        <h2>Funding by sector</h2>
+        <p>How investment is distributed across sectors.</p>
+      </div>
+
+      <canvas id="sectorChart" height="320"></canvas>
+    </div>
+  </section>
+</div>
+
+<script src="app.js" defer></script>
+</body>
 </html>
