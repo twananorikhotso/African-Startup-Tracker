@@ -87,6 +87,11 @@ def fetch_startups(url: str) -> List[StartupInfo]:
     try:
         response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
+        logger.info(
+            "Successfully fetched startup data from %s with status %d",
+            url,
+            response.status_code,
+        )
     except requests.RequestException as error:
         logger.error("Failed to fetch startup data: %s", error)
         return []
