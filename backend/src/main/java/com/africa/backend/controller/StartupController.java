@@ -3,6 +3,8 @@ package com.africa.backend.controller;
 import com.africa.backend.entity.Startup;
 import com.africa.backend.repository.StartupRepository;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,9 @@ import java.util.List;
 @RequestMapping("/startups")
 public class StartupController {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(StartupController.class);
+
     private final StartupRepository startupRepository;
 
     public StartupController(StartupRepository startupRepository) {
@@ -20,11 +25,29 @@ public class StartupController {
 
     @GetMapping
     public List<Startup> getAllStartups() {
-        return startupRepository.findAll();
+        logger.info("Received request to retrieve all startups");
+
+        List<Startup> startups = startupRepository.findAll();
+
+        logger.info("Retrieved {} startups", startups.size());
+
+        return startups;
     }
 
     @PostMapping
     public Startup createStartup(@Valid @RequestBody Startup startup) {
-        return startupRepository.save(startup);
+        logger.info(
+                "Received request to create startup: {}",
+                startup.getCompany()
+        );
+
+        Startup savedStartup = startupRepository.save(startup);
+
+        logger.info(
+                "Successfully created startup with ID: {}",
+                savedStartup.getId()
+        );
+
+        return savedStartup;
     }
 }
