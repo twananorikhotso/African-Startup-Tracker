@@ -110,6 +110,7 @@ def fetch_startups(url: str) -> List[StartupInfo]:
         funding = card.select_one(".funding, .amount")
 
         if not company:
+            logger.warning("Skipping startup card with missing company name")
             continue
 
         startup = StartupInfo(
@@ -134,6 +135,7 @@ def fetch_startups(url: str) -> List[StartupInfo]:
 def save_startups(startups: List[StartupInfo], connection_string: str):
     try:
         conn = psycopg2.connect(connection_string)
+        logger.info("Successfully connected to PostgreSQL")
     except psycopg2.Error as error:
         logger.error("Database connection failed: %s", error)
         return False
@@ -149,6 +151,10 @@ def save_startups(startups: List[StartupInfo], connection_string: str):
                 [(s.company, s.country, s.sector, s.funding) for s in startups],
             )
             conn.commit()
+            logger.info(
+                "Successfully saved %d startup records",
+                len(startups),
+            )
             return True
 
     except psycopg2.Error as error:
