@@ -41,6 +41,35 @@ class StartupInfo:
 
         return True
 
+def normalize_company(value: str | None) -> str:
+    if not value:
+        return ""
+
+    return " ".join(value.split())
+
+
+def normalize_country(value: str | None) -> str:
+    if not value:
+        return "Unknown"
+
+    cleaned = " ".join(value.split()).strip()
+
+    if not cleaned:
+        return "Unknown"
+
+    return cleaned.title()
+
+
+def normalize_sector(value: str | None) -> str:
+    if not value:
+        return "Unknown"
+
+    cleaned = " ".join(value.split()).strip()
+
+    if not cleaned:
+        return "Unknown"
+
+    return cleaned.title()
 
 def clean_funding(value: str | None) -> int:
     if not value:
@@ -114,11 +143,17 @@ def fetch_startups(url: str) -> List[StartupInfo]:
             continue
 
         startup = StartupInfo(
-            company=company.get_text(strip=True),
-            country=(country.get_text(strip=True) if country else "Unknown"),
-            sector=(sector.get_text(strip=True) if sector else "Unknown"),
+            company=normalize_company(
+                company.get_text(strip=True)
+            ),
+            country=normalize_country(
+                country.get_text(strip=True) if country else None
+            ),
+            sector=normalize_sector(
+                sector.get_text(strip=True) if sector else None
+            ),
             funding=clean_funding(
-                funding.get_text(strip=True) if funding else "0"
+                funding.get_text(strip=True) if funding else None
             ),
             source_url=url,
         )
