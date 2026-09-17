@@ -1,0 +1,147 @@
+from unittest.mock import MagicMock, patch
+
+from ingestion.scraper import (
+    StartupInfo,
+    clean_funding,
+    fetch_startups,
+    save_startups,
+)
+
+
+def test_clean_funding_converts_common_amounts():
+    assert clean_funding("$500K") == 500_000
+    assert clean_funding("$2M") == 2_000_000
+    assert clean_funding("$1.5B") == 1_500_000_000
+    assert clean_funding("$250000") == 250_000
+
+
+def test_clean_funding_handles_missing_and_unknown_values():
+    assert clean_funding(None) == 0
+    assert clean_funding("") == 0
+    assert clean_funding("N/A") == 0
+    assert clean_funding("Unknown") == 0
+    assert clean_funding("Undisclosed") == 0
+
+
+def test_valid_startup_passes_validation():
+    startup = StartupInfo(
+        company="Paystack",
+        country="Nigeria",
+        sector="FinTech",
+        funding=200_000_000,
+        source_url="https://example.com",
+    )
+
+    assert startup.is_valid() is True
+
+
+def test_startup_with_missing_company_is_invalid():
+    startup = StartupInfo(
+        company="",
+        country="Nigeria",
+        sector="FinTech",
+        funding=1_000_000,
+        source_url="https://example.com",
+    )
+
+    assert startup.is_valid() is False
+
+
+def test_startup_with_unknown_country_is_invalid():
+    startup = StartupInfo(
+        company="Example Startup",
+        country="Unknown",
+        sector="FinTech",
+        funding=1_000_000,
+        source_url="https://example.com",
+    )
+
+    assert startup.is_valid() is False
+
+
+def test_startup_with_unknown_sector_is_invalid():
+    startup = StartupInfo(
+        company="Example Startup",
+        country="Nigeria",
+        sector="Unknown",
+        funding=1_000_000,
+        source_url="https://example.com",
+    )
+
+    assert startup.is_valid() is False
+
+
+def test_startup_with_negative_funding_is_invalid():
+    startup = StartupInfo(
+        company="Example Startup",
+        country="Nigeria",
+        sector="FinTech",
+        funding=-1,
+        source_url="https://example.com",
+    )
+
+    assert startup.is_valid() is False
+
+
+@patch("ingestion.scraper.requests.get")
+def test_fetch_startups_skips_invalid_startup_data(mock_get):
+    html = """
+    <div class="startup-card">
+        <div class="company-name">Missing Details Startup</div>
+    </div>
+    """
+
+    response = MagicMock()
+    response.text = html
+    response.status_code = 200
+    response.raise_for_status.return_value = None
+    mock_get.return_value = response
+
+    startups = fetch_startups("https://example.com/startups")
+
+    assert startups == []
+
+
+@patch("ingestion.scraper.execute_values")
+@patch("ingestion.scraper.psycopg2.connect")
+def test_save_startups_uses_duplicate_safe_insert(
+        mock_connect,
+        mock_execute_values,
+):
+    connection = MagicMock()
+    cursor = MagicMock()
+
+    connection.cursor.return_value.__enter__.return_value = cursor
+    cursor.rowcount = 1
+    mock_connect.return_value = connection
+
+    startups = [
+        StartupInfo(
+            company="Paystack",
+            country="Nigeria",
+            sector="FinTech",
+            funding=200_000_000,
+            source_url="https://example.com",
+        ),
+        StartupInfo(
+            company="Paystack",
+            country="Nigeria",
+            sector="FinTech",
+            funding=200_000_000,
+            source_url="https://example.com",
+        ),
+    ]
+
+    result = save_startups(startups, "test-connection")
+
+    assert result is True
+
+    mock_execute_values.assert_called_once()
+
+    sql = mock_execute_values.call_args.args[1]
+
+    assert "ON CONFLICT" in sql
+    assert "DO NOTHING" in sql
+
+    connection.commit.assert_called_once()
+    connection.close.assert_called_once()
