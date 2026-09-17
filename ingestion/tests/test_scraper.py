@@ -105,21 +105,19 @@ def test_startup_with_negative_funding_is_invalid():
     assert startup.is_valid() is False
 
 
-@patch("ingestion.scraper.requests.get")
-def test_fetch_startups_skips_invalid_startup_data(mock_get):
+@patch("ingestion.scraper.extract_startup_html")
+def test_fetch_startups_skips_invalid_startup_data(mock_extract):
     html = """
     <div class="startup-card">
         <div class="company-name">Missing Details Startup</div>
     </div>
     """
 
-    response = MagicMock()
-    response.text = html
-    response.status_code = 200
-    response.raise_for_status.return_value = None
-    mock_get.return_value = response
+    mock_extract.return_value = html
 
-    startups = fetch_startups("https://example.com/startups")
+    startups = fetch_startups(
+        "https://example.com/startups"
+    )
 
     assert startups == []
 
