@@ -4,8 +4,30 @@ from ingestion.scraper import (
     StartupInfo,
     clean_funding,
     fetch_startups,
+    normalize_company,
+    normalize_country,
+    normalize_sector,
     save_startups,
 )
+
+def test_normalize_company_cleans_whitespace():
+    assert normalize_company("  Flutterwave  ") == "Flutterwave"
+    assert normalize_company("  M-KOPA   Solar  ") == "M-KOPA Solar"
+    assert normalize_company(None) == ""
+
+
+def test_normalize_country_cleans_values():
+    assert normalize_country("  south   africa  ") == "South Africa"
+    assert normalize_country("NIGERIA") == "Nigeria"
+    assert normalize_country("") == "Unknown"
+    assert normalize_country(None) == "Unknown"
+
+
+def test_normalize_sector_cleans_values():
+    assert normalize_sector("  financial   technology  ") == "Financial Technology"
+    assert normalize_sector("FINTECH") == "Fintech"
+    assert normalize_sector("") == "Unknown"
+    assert normalize_sector(None) == "Unknown"
 
 
 def test_clean_funding_converts_common_amounts():
