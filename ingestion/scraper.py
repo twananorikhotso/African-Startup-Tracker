@@ -1,7 +1,7 @@
 import argparse
 import logging
 import re
-from dataclasses import dataclass
+from ingestion.model import StartupInfo
 from typing import List
 
 import psycopg2
@@ -17,29 +17,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-
-@dataclass
-class StartupInfo:
-    company: str
-    country: str
-    sector: str
-    funding: int
-    source_url: str
-
-    def is_valid(self) -> bool:
-        if not self.company or not self.company.strip():
-            return False
-
-        if not self.country or self.country.strip().lower() == "unknown":
-            return False
-
-        if not self.sector or self.sector.strip().lower() == "unknown":
-            return False
-
-        if self.funding < 0:
-            return False
-
-        return True
 
 def normalize_company(value: str | None) -> str:
     if not value:
