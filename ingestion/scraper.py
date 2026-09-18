@@ -2,9 +2,6 @@ import argparse
 import logging
 from typing import List
 
-import psycopg2
-from psycopg2.extras import execute_values
-
 from ingestion.model import StartupInfo
 from ingestion.extract import extract_startup_html
 from ingestion.transform import (
@@ -13,6 +10,10 @@ from ingestion.transform import (
     normalize_country,
     normalize_sector,
     transform_startups,
+)
+from ingestion.load import (
+    build_connection_string,
+    save_startups,
 )
 
 
@@ -31,60 +32,6 @@ def fetch_startups(url: str) -> List[StartupInfo]:
         return []
 
     return transform_startups(html, url)
-
-
-def save_startups(startups: List[StartupInfo], connection_string: str):
-    try:
-        conn = psycopg2.connect(connection_string)
-        logger.info("Successfully connected to PostgreSQL")
-    except psycopg2.Error as error:
-        logger.error("Database connection failed: %s", error)
-        return False
-
-    try:
-        with conn.cursor() as cursor:
-            execute_values(
-                cursor,
-                """
-                INSERT INTO startups (
-                    company_name,
-                    origin_country,
-                    target_sector,
-                    funding_amount,
-                    source_url
-                )
-                VALUES %s
-                ON CONFLICT (LOWER(BTRIM(company_name)))
-                DO NOTHING
-                """,
-                [
-                    (
-                        s.company,
-                        s.country,
-                        s.sector,
-                        s.funding,
-                        s.source_url,
-                    )
-                    for s in startups
-                ],
-            )
-
-            inserted_count = cursor.rowcount
-            conn.commit()
-            logger.info(
-                "Saved %d new startup records; skipped %d duplicates",
-                inserted_count,
-                len(startups) - inserted_count,
-                )
-            return True
-
-    except psycopg2.Error as error:
-        conn.rollback()
-        logger.error("Failed to save startup data: %s", error)
-        return False
-
-    finally:
-        conn.close()
 
 
 def seed_sample_startup(connection_string: str):

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from ingestion.scraper import (
     StartupInfo,
@@ -120,48 +120,3 @@ def test_fetch_startups_skips_invalid_startup_data(mock_extract):
     )
 
     assert startups == []
-
-
-@patch("ingestion.scraper.execute_values")
-@patch("ingestion.scraper.psycopg2.connect")
-def test_save_startups_uses_duplicate_safe_insert(
-        mock_connect,
-        mock_execute_values,
-):
-    connection = MagicMock()
-    cursor = MagicMock()
-
-    connection.cursor.return_value.__enter__.return_value = cursor
-    cursor.rowcount = 1
-    mock_connect.return_value = connection
-
-    startups = [
-        StartupInfo(
-            company="Paystack",
-            country="Nigeria",
-            sector="FinTech",
-            funding=200_000_000,
-            source_url="https://example.com",
-        ),
-        StartupInfo(
-            company="Paystack",
-            country="Nigeria",
-            sector="FinTech",
-            funding=200_000_000,
-            source_url="https://example.com",
-        ),
-    ]
-
-    result = save_startups(startups, "test-connection")
-
-    assert result is True
-
-    mock_execute_values.assert_called_once()
-
-    sql = mock_execute_values.call_args.args[1]
-
-    assert "ON CONFLICT" in sql
-    assert "DO NOTHING" in sql
-
-    connection.commit.assert_called_once()
-    connection.close.assert_called_once()
