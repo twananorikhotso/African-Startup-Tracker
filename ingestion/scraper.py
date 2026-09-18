@@ -1,6 +1,7 @@
 import argparse
 import logging
 from typing import List
+from ingestion.pipeline import run_pipeline
 
 from ingestion.model import StartupInfo
 from ingestion.extract import extract_startup_html
@@ -46,16 +47,6 @@ def seed_sample_startup(connection_string: str):
     if save_startups([sample], connection_string):
         logger.info("Sample startup ingestion completed")
 
-
-def build_connection_string(
-        host: str,
-        database: str,
-        user: str,
-        password: str,
-) -> str:
-    return f"host={host} dbname={database} user={user} password={password}"
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Scrape and ingest startup funding data."
@@ -96,20 +87,10 @@ def main() -> None:
         seed_sample_startup(connection_string)
         return
 
-    logger.info("Scraping startups from %s", args.url)
+    logger.info("Running startup ETL pipeline for %s", args.url)
 
-    startups = fetch_startups(args.url)
-
-    if not startups:
-        logger.warning(
-            "No startup entries were detected. "
-            "Check the URL or update scraping selectors."
-        )
-        return
-
-    if save_startups(startups, connection_string):
-        logger.info("Imported %d startups into PostgreSQL", len(startups))
-
+    if not run_pipeline(args.url, connection_string):
+        logger.warning("Startup ETL pipeline did not complete successfully")
 
 if __name__ == "__main__":
     main()
