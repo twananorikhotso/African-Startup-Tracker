@@ -2,6 +2,7 @@ import logging
 import os
 import time
 
+from ingestion.load import build_connection_string
 from ingestion.pipeline import run_pipeline
 
 
@@ -48,8 +49,16 @@ if __name__ == "__main__":
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
 
-    startup_url = os.getenv("STARTUP_SOURCE_URL")
-    database_url = os.getenv("DATABASE_URL")
+    startup_url = os.getenv(
+        "STARTUP_SOURCE_URL",
+        "https://example.com",
+    )
+
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_name = os.getenv("DB_NAME", "startup_db")
+    db_user = os.getenv("DB_USER", "postgres")
+    db_password = os.getenv("DB_PASSWORD")
+
     interval = int(
         os.getenv(
             "INGESTION_INTERVAL_SECONDS",
@@ -57,14 +66,20 @@ if __name__ == "__main__":
         )
     )
 
-    if not startup_url:
-        raise RuntimeError("STARTUP_SOURCE_URL environment variable is required")
+    if not db_password:
+        raise RuntimeError(
+            "DB_PASSWORD environment variable is required"
+        )
 
-    if not database_url:
-        raise RuntimeError("DATABASE_URL environment variable is required")
+    connection_string = build_connection_string(
+        db_host,
+        db_name,
+        db_user,
+        db_password,
+    )
 
     run_scheduled_ingestion(
         startup_url,
-        database_url,
+        connection_string,
         interval,
     )
