@@ -6,42 +6,58 @@ from ingestion.pipeline import run_pipeline
 
 @patch("ingestion.pipeline.save_startups")
 @patch("ingestion.pipeline.transform_startups")
+@patch("ingestion.pipeline.extract_startup_links")
 @patch("ingestion.pipeline.extract_startup_html")
 def test_run_pipeline_coordinates_etl(
         mock_extract,
+        mock_links,
         mock_transform,
         mock_save,
 ):
-    html = "<html>startup data</html>"
+    funding_html = "<html>funding page</html>"
+    profile_html = "<html>startup profile</html>"
+
+    profile_url = (
+        "https://au-startups.com/startups/sycamore"
+    )
 
     startups = [
         StartupInfo(
-            company="Paystack",
+            company="Sycamore",
             country="Nigeria",
-            sector="FinTech",
-            funding=200_000_000,
-            source_url="https://example.com/startups",
+            sector="Fintech",
+            funding=5_000_000,
+            source_url=profile_url,
         )
     ]
 
-    mock_extract.return_value = html
+    mock_extract.side_effect = [
+        funding_html,
+        profile_html,
+    ]
+
+    mock_links.return_value = [profile_url]
     mock_transform.return_value = startups
     mock_save.return_value = True
 
     result = run_pipeline(
-        "https://example.com/startups",
+        "https://au-startups.com/funding",
         "test-connection",
     )
 
     assert result is True
 
-    mock_extract.assert_called_once_with(
-        "https://example.com/startups"
+    assert mock_extract.call_count == 2
+
+    mock_links.assert_called_once_with(
+        funding_html,
+        "https://au-startups.com/funding",
+        limit=10,
     )
 
     mock_transform.assert_called_once_with(
-        html,
-        "https://example.com/startups",
+        profile_html,
+        profile_url,
     )
 
     mock_save.assert_called_once_with(
@@ -66,17 +82,31 @@ def test_run_pipeline_stops_when_extraction_fails(
 
 @patch("ingestion.pipeline.save_startups")
 @patch("ingestion.pipeline.transform_startups")
+@patch("ingestion.pipeline.extract_startup_links")
 @patch("ingestion.pipeline.extract_startup_html")
 def test_run_pipeline_stops_when_no_valid_data_found(
         mock_extract,
+        mock_links,
         mock_transform,
         mock_save,
 ):
-    mock_extract.return_value = "<html></html>"
+    funding_html = "<html>funding page</html>"
+    profile_html = "<html>startup profile</html>"
+
+    profile_url = (
+        "https://au-startups.com/startups/sycamore"
+    )
+
+    mock_extract.side_effect = [
+        funding_html,
+        profile_html,
+    ]
+
+    mock_links.return_value = [profile_url]
     mock_transform.return_value = []
 
     result = run_pipeline(
-        "https://example.com/startups",
+        "https://au-startups.com/funding",
         "test-connection",
     )
 

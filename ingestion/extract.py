@@ -1,6 +1,8 @@
 import logging
-
 import requests
+from urllib.parse import urljoin
+
+from bs4 import BeautifulSoup
 
 
 logger = logging.getLogger(__name__)
@@ -30,3 +32,37 @@ def extract_startup_html(url: str) -> str | None:
     except requests.RequestException as error:
         logger.error("Failed to extract startup data: %s", error)
         return None
+
+def extract_startup_links(
+        html: str,
+        base_url: str,
+        limit: int = 10,
+) -> list[str]:
+    soup = BeautifulSoup(html, "html.parser")
+
+    startup_urls = []
+    seen_urls = set()
+
+    for link in soup.select('a[href^="/startups/"]'):
+        href = link.get("href")
+
+        if not href:
+            continue
+
+        startup_url = urljoin(base_url, href)
+
+        if startup_url in seen_urls:
+            continue
+
+        seen_urls.add(startup_url)
+        startup_urls.append(startup_url)
+
+        if len(startup_urls) >= limit:
+            break
+
+    logger.info(
+        "Discovered %d startup profile URLs",
+        len(startup_urls),
+    )
+
+    return startup_urls

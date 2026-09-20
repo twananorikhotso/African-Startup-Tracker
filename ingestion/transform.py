@@ -7,6 +7,21 @@ from bs4 import BeautifulSoup
 from ingestion.model import StartupInfo
 
 logger = logging.getLogger(__name__)
+COUNTRY_CODES = {
+    "NG": "Nigeria",
+    "ZA": "South Africa",
+    "KE": "Kenya",
+    "EG": "Egypt",
+    "GH": "Ghana",
+    "MA": "Morocco",
+    "CI": "Cote d'Ivoire",
+    "TN": "Tunisia",
+    "RW": "Rwanda",
+    "SN": "Senegal",
+    "ET": "Ethiopia",
+    "TZ": "Tanzania",
+    "UG": "Uganda",
+}
 
 
 def normalize_company(value: str | None) -> str:
@@ -26,6 +41,14 @@ def normalize_country(value: str | None) -> str:
         return "Unknown"
 
     return cleaned.title()
+
+def country_from_code(value: str | None) -> str:
+    if not value:
+        return "Unknown"
+
+    code = value.strip().upper()
+
+    return COUNTRY_CODES.get(code, "Unknown")
 
 
 def normalize_sector(value: str | None) -> str:
@@ -78,48 +101,74 @@ def transform_startups(
 ) -> List[StartupInfo]:
     soup = BeautifulSoup(html, "html.parser")
 
-    startup_links = soup.select('a[href^="/startups/"]')
-    logger.info("Found %d startup links", len(startup_links))
+    company_element = soup.select_one(
+        'main h1[class*="text-white"]'
+    )
 
-    startups = []
+    sector_element = soup.select_one(
+        'a[href^="/sectors/"]'
+    )
 
-    for card in soup.select(
-            ".startup-card, .deal-card, .company-card"
+    country_code = None
+
+    for script in soup.find_all(
+            "script",
+            type="application/ld+json",
     ):
-        company = card.select_one(".company-name, .name")
-        country = card.select_one(".country, .location")
-        sector = card.select_one(".sector, .category")
-        funding = card.select_one(".funding, .amount")
+        script_text = script.string
 
-        if not company:
-            logger.warning(
-                "Skipping startup card with missing company name"
-            )
+        if not script_text:
             continue
 
-        startup = StartupInfo(
-            company=normalize_company(
-                company.get_text(strip=True)
-            ),
-            country=normalize_country(
-                country.get_text(strip=True) if country else None
-            ),
-            sector=normalize_sector(
-                sector.get_text(strip=True) if sector else None
-            ),
-            funding=clean_funding(
-                funding.get_text(strip=True) if funding else None
-            ),
-            source_url=source_url,
+        match = re.search(
+            r'"addressCountry"\s*:\s*"([^"]+)"',
+            script_text,
         )
 
-        if not startup.is_valid():
-            logger.warning(
-                "Skipping invalid startup: %s",
-                startup,
-            )
-            continue
+        if match:
+            country_code = match.group(1)
+            break
 
-        startups.append(startup)
+    funding_element = None
 
-    return startups
+    for paragraph in soup.find_all("p"):
+        text = paragraph.get_text(strip=True)
+
+        if re.fullmatch(
+                r"\$[\d,.]+[KMB]?",
+                text,
+                flags=re.IGNORECASE,
+        ):
+            funding_element = paragraph
+            break
+
+    if not company_element:
+        logger.warning(
+            "Skipping startup profile with missing company name"
+        )
+        return []
+
+    startup = StartupInfo(
+        company=normalize_company(
+            company_element.get_text(strip=True)
+        ),
+        country=country_from_code(country_code),
+        sector=normalize_sector(
+            sector_element.get_text(strip=True)
+            if sector_element else None
+        ),
+        funding=clean_funding(
+            funding_element.get_text(strip=True)
+            if funding_element else None
+        ),
+        source_url=source_url,
+    )
+
+    if not startup.is_valid():
+        logger.warning(
+            "Skipping invalid startup: %s",
+            startup,
+        )
+        return []
+
+    return [startup]

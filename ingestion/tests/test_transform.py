@@ -44,25 +44,48 @@ def test_clean_funding_handles_missing_and_unknown_values():
 
 def test_transform_startups_creates_clean_valid_records():
     html = """
-    <div class="startup-card">
-        <div class="company-name">  M-KOPA   Solar  </div>
-        <div class="country">  KENYA  </div>
-        <div class="sector">  financial   technology  </div>
-        <div class="funding">$2M</div>
-    </div>
+    <main>
+        <h1 class="text-white">
+            Sycamore
+        </h1>
+
+        <a href="/sectors/fintech">
+            Fintech
+        </a>
+
+        <p class="funding-total">
+            $5.0M
+        </p>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Sycamore",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "NG"
+            }
+        }
+        </script>
+    </main>
     """
+
+    source_url = (
+        "https://au-startups.com/startups/sycamore"
+    )
 
     startups = transform_startups(
         html,
-        "https://example.com/startups",
+        source_url,
     )
 
     assert len(startups) == 1
 
     startup = startups[0]
 
-    assert startup.company == "M-KOPA Solar"
-    assert startup.country == "Kenya"
-    assert startup.sector == "Financial Technology"
-    assert startup.funding == 2_000_000
-    assert startup.source_url == "https://example.com/startups"
+    assert startup.company == "Sycamore"
+    assert startup.country == "Nigeria"
+    assert startup.sector == "Fintech"
+    assert startup.funding == 5_000_000
+    assert startup.source_url == source_url
