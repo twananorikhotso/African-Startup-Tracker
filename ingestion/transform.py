@@ -69,6 +69,26 @@ def clean_funding(value: str | None) -> int:
 
     value = value.strip().upper()
 
+    value = value.replace(",", "")
+
+    value = re.sub(
+        r"\s+MILLION$",
+        "M",
+        value,
+    )
+
+    value = re.sub(
+        r"\s+BILLION$",
+        "B",
+        value,
+    )
+
+    value = re.sub(
+        r"\s+THOUSAND$",
+        "K",
+        value,
+    )
+
     if value in {"N/A", "UNDISCLOSED", "UNKNOWN"}:
         return 0
 
@@ -145,6 +165,12 @@ def transform_startups(
     if not company_element:
         logger.warning(
             "Skipping startup profile with missing company name"
+        )
+        return []
+
+    if funding_element is None:
+        logger.warning(
+            "Skipping startup profile with missing or undisclosed funding"
         )
         return []
 
