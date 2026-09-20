@@ -49,9 +49,11 @@ if __name__ == "__main__":
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
 
-    startup_url = os.getenv(
-        "STARTUP_SOURCE_URL",
-        "https://example.com",
+    startup_url = os.getenv("STARTUP_SOURCE_URL")
+
+    if not startup_url:
+        raise RuntimeError(
+            "STARTUP_SOURCE_URL environment variable is required"
     )
 
     db_host = os.getenv("DB_HOST", "localhost")

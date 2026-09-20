@@ -35,18 +35,6 @@ def fetch_startups(url: str) -> List[StartupInfo]:
     return transform_startups(html, url)
 
 
-def seed_sample_startup(connection_string: str):
-    sample = StartupInfo(
-        company="Paystack",
-        country="Nigeria",
-        sector="FinTech",
-        funding=200000000,
-        source_url="https://example.com",
-    )
-
-    if save_startups([sample], connection_string):
-        logger.info("Sample startup ingestion completed")
-
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Scrape and ingest startup funding data."
@@ -54,7 +42,7 @@ def main() -> None:
     parser.add_argument(
         "--url",
         help="Source website URL to scrape",
-        default="https://example.com",
+        required="True",
     )
     parser.add_argument("--host", help="PostgreSQL host", default="localhost")
     parser.add_argument(
@@ -68,11 +56,6 @@ def main() -> None:
         help="PostgreSQL password",
         default="postgres",
     )
-    parser.add_argument(
-        "--seed-sample",
-        help="Seed sample startup data instead of scraping",
-        action="store_true",
-    )
 
     args = parser.parse_args()
 
@@ -82,10 +65,6 @@ def main() -> None:
         args.user,
         args.password,
     )
-
-    if args.seed_sample:
-        seed_sample_startup(connection_string)
-        return
 
     logger.info("Running startup ETL pipeline for %s", args.url)
 
