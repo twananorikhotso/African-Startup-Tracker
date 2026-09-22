@@ -114,33 +114,80 @@
     </div>
   </header>
 
-  <section class="summary-grid" aria-label="Market overview">
-    <article class="summary-card">
-      <div class="summary-card-header">
-        <span>Tracked startups</span>
-        <span class="metric-label">Companies</span>
-      </div>
-      <strong id="totalStartups">0</strong>
-      <p>Startups currently represented in the dataset</p>
-    </article>
+  <section class="ecosystem-overview" aria-labelledby="ecosystem-title">
+    <div class="section-heading">
+      <div>
+        <p class="section-eyebrow">Ecosystem snapshot</p>
 
-    <article class="summary-card">
-      <div class="summary-card-header">
-        <span>Total funding</span>
-        <span class="metric-label">USD</span>
+        <h2 id="ecosystem-title">
+          Africa's startup landscape,
+          <span>at a glance.</span>
+        </h2>
       </div>
-      <strong id="totalFunding">$0</strong>
-      <p>Combined disclosed funding across tracked companies</p>
-    </article>
 
-    <article class="summary-card">
-      <div class="summary-card-header">
-        <span>Average funding</span>
-        <span class="metric-label">Per startup</span>
-      </div>
-      <strong id="averageFunding">$0</strong>
-      <p>Average disclosed funding across the current dataset</p>
-    </article>
+      <p class="section-description">
+        A live overview of the companies and disclosed funding represented
+        in the African Startup Tracker dataset.
+      </p>
+    </div>
+
+    <div class="summary-grid">
+      <article class="summary-card summary-card-primary">
+        <div class="metric-icon" aria-hidden="true">01</div>
+
+        <div class="summary-card-header">
+          <span>Tracked startups</span>
+          <span class="metric-label">Companies</span>
+        </div>
+
+        <strong id="totalStartups">0</strong>
+
+        <p>
+          African startups currently represented across the intelligence
+          dataset.
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="metric-icon" aria-hidden="true">02</div>
+
+        <div class="summary-card-header">
+          <span>Total disclosed funding</span>
+          <span class="metric-label">USD</span>
+        </div>
+
+        <strong id="totalFunding">$0</strong>
+
+        <p>
+          Combined disclosed funding recorded across tracked companies.
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="metric-icon" aria-hidden="true">03</div>
+
+        <div class="summary-card-header">
+          <span>Average funding</span>
+          <span class="metric-label">Per startup</span>
+        </div>
+
+        <strong id="averageFunding">$0</strong>
+
+        <p>
+          Average disclosed capital represented by each startup in the dataset.
+        </p>
+      </article>
+    </div>
+
+    <div class="ecosystem-note">
+      <span class="ecosystem-note-icon" aria-hidden="true">↗</span>
+
+      <p>
+        <strong>Built from the data pipeline.</strong>
+        Metrics update automatically from startup records returned by the
+        backend API.
+      </p>
+    </div>
   </section>
 
   <section class="controls-row">
