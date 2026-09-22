@@ -877,6 +877,35 @@ h2 {
   box-shadow: 0 0 0 4px rgba(39, 131, 91, 0.1);
 }
 
+.explorer-status-dot.is-loading {
+  background: var(--color-gold);
+  box-shadow: 0 0 0 4px rgba(213, 160, 33, 0.12);
+  animation: status-pulse 1.5s ease-in-out infinite;
+}
+
+.explorer-status-dot.is-success {
+  background: var(--color-success);
+  box-shadow: 0 0 0 4px rgba(39, 131, 91, 0.1);
+  animation: none;
+}
+
+.explorer-status-dot.is-error {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 4px rgba(185, 74, 61, 0.1);
+  animation: none;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
 .status-message {
   margin: 0;
   color: var(--color-muted);
@@ -1060,9 +1089,37 @@ tbody tr:last-child td {
 }
 
 .empty-state {
-  padding: 32px;
-  color: #6b7280;
+  padding: 48px 24px;
   text-align: center;
+}
+
+.empty-state-content {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.empty-state-content > span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 5px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-soft);
+  color: var(--color-muted);
+  font-size: 1.1rem;
+}
+
+.empty-state-content strong {
+  color: var(--color-forest-deep);
+  font-size: 0.86rem;
+}
+
+.empty-state-content p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.75rem;
 }
 
 /* Funding intelligence */

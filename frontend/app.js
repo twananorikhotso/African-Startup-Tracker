@@ -6,6 +6,7 @@ const searchInput = document.querySelector("#searchInput");
 const totalStartupsEl = document.querySelector("#totalStartups");
 const totalFundingEl = document.querySelector("#totalFunding");
 const averageFundingEl = document.querySelector("#averageFunding");
+const explorerStatusDot = document.querySelector("#explorerStatusDot");
 
 let allStartups = [];
 let countryChart;
@@ -41,12 +42,17 @@ function renderTable(startups) {
 
   if (!startups.length) {
     tableBody.innerHTML = `
-      <tr>
-        <td colspan="4" class="empty-state">
-          No startups found for the current filter.
-        </td>
-      </tr>
-    `;
+    <tr>
+      <td colspan="4" class="empty-state">
+        <div class="empty-state-content">
+          <span aria-hidden="true">⌕</span>
+          <strong>No startups found</strong>
+          <p>Try another company, country, or sector.</p>
+        </div>
+      </td>
+    </tr>
+  `;
+
     return;
   }
 
@@ -137,6 +143,20 @@ function buildChart(canvasId, labels, values, title) {
 }
 
 function renderCharts(startups) {
+  if (countryChart) {
+    countryChart.destroy();
+    countryChart = undefined;
+  }
+
+  if (sectorChart) {
+    sectorChart.destroy();
+    sectorChart = undefined;
+  }
+
+  if (!startups.length) {
+    return;
+  }
+
   const countryData = groupBy(startups, "country");
   const sectorData = groupBy(startups, "sector");
 
@@ -175,55 +195,71 @@ function applySearchFilter() {
   renderTable(filteredStartups);
   renderCharts(filteredStartups);
 
-  statusMessage.textContent = query
-      ? `Showing ${filteredStartups.length} of ${allStartups.length} startups.`
-      : `Loaded ${allStartups.length} startups.`;
+  if (!query) {
+    setStatus(
+        `${allStartups.length} startups loaded`,
+        "success"
+    );
+  } else if (filteredStartups.length === 0) {
+    setStatus(
+        `No results for "${searchInput.value.trim()}"`,
+        "success"
+    );
+  } else {
+    setStatus(
+        `Showing ${filteredStartups.length} of ${allStartups.length} startups`,
+        "success"
+    );
+  }
+}
+
+function setStatus(message, state = "success") {
+  statusMessage.textContent = message;
+
+  explorerStatusDot.classList.remove(
+      "is-loading",
+      "is-success",
+      "is-error"
+  );
+
+  explorerStatusDot.classList.add(`is-${state}`);
 }
 
 async function loadStartups() {
-  statusMessage.textContent = "Loading startup data from backend...";
+  setStatus("Connecting to startup data...", "loading");
 
   try {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error(`API error ${response.status}`);
+      throw new Error(
+          `API request failed with status ${response.status}`
+      );
     }
 
     allStartups = await response.json();
 
-    statusMessage.textContent = `Loaded ${allStartups.length} startups.`;
-
     renderMetrics(allStartups);
     renderTable(allStartups);
     renderCharts(allStartups);
+
+    setStatus(
+        `${allStartups.length} startups loaded`,
+        "success"
+    );
   } catch (error) {
     console.error("Failed to load startup data:", error);
 
     allStartups = [];
 
-    statusMessage.textContent =
-        "Unable to load startup data. Please try again later.";
-
     renderMetrics([]);
+    renderTable([]);
+    renderCharts([]);
 
-    if (countryChart) {
-      countryChart.destroy();
-      countryChart = undefined;
-    }
-
-    if (sectorChart) {
-      sectorChart.destroy();
-      sectorChart = undefined;
-    }
-
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="4" class="empty-state">
-          Cannot load startup data.
-        </td>
-      </tr>
-    `;
+    setStatus(
+        "Startup data is currently unavailable",
+        "error"
+    );
   }
 }
 
