@@ -264,26 +264,83 @@
     </div>
   </section>
 
-  <section class="panel grid-two">
-    <div>
-      <div class="panel-header">
-        <h2>Funding by country</h2>
-        <p>Top investment destinations for tracked startups.</p>
+  <section class="funding-intelligence" id="funding" aria-labelledby="funding-title">
+    <div class="section-heading">
+      <div>
+        <p class="section-eyebrow">Funding intelligence</p>
+
+        <h2 id="funding-title">
+          Follow where capital
+          <span>is flowing.</span>
+        </h2>
       </div>
 
-      <div class="chart-container">
-        <canvas id="countryChart"></canvas>
-      </div>
+      <p class="section-description">
+        Compare disclosed startup funding across African markets and sectors
+        represented in the current dataset.
+      </p>
     </div>
 
-    <div>
-      <div class="panel-header">
-        <h2>Funding by sector</h2>
-        <p>How investment is distributed across sectors.</p>
+    <div class="funding-grid">
+      <article class="funding-card">
+        <div class="funding-card-header">
+          <div>
+            <span class="chart-eyebrow">Market distribution</span>
+            <h3>Funding by country</h3>
+            <p>
+              Compare disclosed investment across the African markets
+              represented in the dataset.
+            </p>
+          </div>
+
+          <span class="chart-badge">USD</span>
+        </div>
+
+        <div class="chart-container">
+          <canvas
+                  id="countryChart"
+                  aria-label="Funding distribution by country"
+          ></canvas>
+        </div>
+      </article>
+
+      <article class="funding-card">
+        <div class="funding-card-header">
+          <div>
+            <span class="chart-eyebrow">Sector distribution</span>
+            <h3>Funding by sector</h3>
+            <p>
+              See how disclosed startup capital is distributed across
+              technology and innovation sectors.
+            </p>
+          </div>
+
+          <span class="chart-badge">USD</span>
+        </div>
+
+        <div class="chart-container">
+          <canvas
+                  id="sectorChart"
+                  aria-label="Funding distribution by sector"
+          ></canvas>
+        </div>
+      </article>
+    </div>
+
+    <div class="funding-insight">
+      <div class="funding-insight-marker" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
 
-      <div class="chart-container">
-        <canvas id="sectorChart"></canvas>
+      <div>
+        <strong>Dynamic funding analysis</strong>
+
+        <p>
+          These visualisations are generated from startup records returned by
+          the backend and update as the underlying dataset changes.
+        </p>
       </div>
     </div>
   </section>
