@@ -190,46 +190,77 @@
     </div>
   </section>
 
-  <section class="controls-row">
-    <label class="search-group">
-      <span>Search startups</span>
-      <input
-              id="searchInput"
-              type="search"
-              placeholder="Search by company, country, or sector"
-      />
-    </label>
-
-    <p id="statusMessage" class="status-message">
-      Loading startup data from backend...
-    </p>
-  </section>
-
-  <section class="panel" id="explorer">
-    <div class="dataset-header">
+  <section class="startup-explorer" id="explorer" aria-labelledby="explorer-title">
+    <div class="section-heading explorer-heading">
       <div>
-        <h2>Startup dataset</h2>
-        <p>
-          Explore tracked companies, their markets, sectors, and disclosed
-          funding.
-        </p>
+        <p class="section-eyebrow">Startup explorer</p>
+
+        <h2 id="explorer-title">
+          Explore the companies
+          <span>shaping African innovation.</span>
+        </h2>
       </div>
 
-      <span class="table-label">Funding in USD</span>
+      <p class="section-description">
+        Search the dataset by company, country, or sector and explore
+        disclosed startup funding across African markets.
+      </p>
     </div>
 
-    <div class="table-wrapper">
-      <table id="startupTable" aria-label="Startup funding table">
-        <thead>
-        <tr>
-          <th>Company</th>
-          <th>Country</th>
-          <th>Sector</th>
-          <th class="funding-column">Funding</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="explorer-toolbar">
+      <label class="search-group">
+        <span>Search the ecosystem</span>
+
+        <div class="search-input-wrapper">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+
+          <input
+                  id="searchInput"
+                  type="search"
+                  placeholder="Search company, country, or sector..."
+                  autocomplete="off"
+          />
+        </div>
+      </label>
+
+      <div class="explorer-status">
+        <span class="explorer-status-dot" aria-hidden="true"></span>
+
+        <p id="statusMessage" class="status-message">
+          Loading startup data from backend...
+        </p>
+      </div>
+    </div>
+
+    <div class="explorer-panel">
+      <div class="dataset-header">
+        <div>
+          <p class="dataset-eyebrow">Company intelligence</p>
+          <h3>Startup directory</h3>
+
+          <p>
+            Browse companies currently represented in the African Startup
+            Tracker dataset.
+          </p>
+        </div>
+
+        <span class="table-label">Funding · USD</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="startupTable" aria-label="African startup funding directory">
+          <thead>
+          <tr>
+            <th>Company</th>
+            <th>Market</th>
+            <th>Sector</th>
+            <th class="funding-column">Disclosed funding</th>
+          </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
