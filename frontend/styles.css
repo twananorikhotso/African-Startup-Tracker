@@ -1880,38 +1880,343 @@ tbody tr:last-child td {
 
 /* Responsive layout */
 
-@media (max-width: 900px) {
-  .summary-grid,
-  .grid-two {
+@media (max-width: 1050px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding: 54px;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+  }
+
+  .hero-visual {
+    min-height: 390px;
+  }
+
+  .section-heading,
+  .pipeline-intro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .section-description,
+  .pipeline-intro > p {
+    max-width: 620px;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .summary-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .funding-grid {
     grid-template-columns: 1fr;
   }
 
-  .topbar {
-    align-items: flex-start;
-    padding: 24px;
+  .funding-card-header {
+    min-height: auto;
   }
 
-  .page-shell {
-    padding: 20px 16px 36px;
+  .pipeline-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-connector {
+    width: 100%;
+    height: 28px;
+  }
+
+  .pipeline-connector span {
+    transform: rotate(90deg);
+  }
+
+  .pipeline-step {
+    min-height: auto;
+  }
+
+  .pipeline-platform {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .platform-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .about-copy {
+    max-width: 700px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 46px;
+  }
+
+  .footer-navigation {
+    max-width: 680px;
   }
 }
 
-@media (max-width: 600px) {
-  .topbar h1 {
-    font-size: 2rem;
+@media (max-width: 760px) {
+  .page-shell,
+  .nav-inner,
+  .footer-inner {
+    width: min(calc(100% - 32px), var(--content-width));
   }
 
-  .summary-card,
-  .panel {
+  html {
+    scroll-padding-top: 84px;
+  }
+
+  .nav-inner {
+    min-height: 68px;
+  }
+
+  .brand-copy small {
+    display: none;
+  }
+
+  .nav-cta {
+    padding: 10px 13px;
+    font-size: 0.75rem;
+  }
+
+  .hero-content {
+    padding: 42px 30px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.6rem, 11vw, 4rem);
+  }
+
+  .hero-description {
+    line-height: 1.65;
+  }
+
+  .hero-visual {
+    min-height: 360px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card:last-child {
+    grid-column: auto;
+  }
+
+  .explorer-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-group {
+    flex-basis: auto;
+    max-width: none;
+  }
+
+  .explorer-status {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .status-message {
+    white-space: normal;
+  }
+
+  .data-pipeline {
+    padding: 38px 28px;
+  }
+
+  .pipeline-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pipeline-tech {
+    justify-content: flex-start;
+  }
+
+  .about-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer-navigation {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-data-note {
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .page-shell {
+    padding-top: 20px;
+  }
+
+  .brand-copy strong {
+    font-size: 0.78rem;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .nav-cta {
+    font-size: 0;
+  }
+
+  .nav-cta span {
+    font-size: 1rem;
+  }
+
+  .hero {
+    border-radius: var(--radius-lg);
+  }
+
+  .hero-content {
+    padding: 36px 22px;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.35rem, 12vw, 3.2rem);
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+
+  .hero-visual {
+    min-height: 330px;
+    padding: 18px;
+  }
+
+  .africa-symbol {
+    width: 175px;
+    height: 195px;
+  }
+
+  .continent-visual {
+    height: 235px;
+  }
+
+  .ecosystem-overview,
+  .startup-explorer,
+  .funding-intelligence,
+  .about-section {
+    padding-top: 58px;
+  }
+
+  .section-heading h2,
+  .about-copy h2 {
+    font-size: 2.15rem;
+  }
+
+  .summary-card {
+    min-height: auto;
+    padding: 22px;
+  }
+
+  .explorer-toolbar {
+    padding: 14px;
+  }
+
+  .explorer-panel .dataset-header {
+    padding: 22px;
+  }
+
+  th,
+  td {
+    padding: 15px 20px;
+  }
+
+  .funding-card {
     padding: 20px;
   }
 
-  .data-status {
-    width: 100%;
-    justify-content: center;
+  .funding-card-header {
+    flex-direction: column;
   }
 
-  .dataset-header {
-    flex-direction: column;
+  .chart-container {
+    height: 300px;
+    padding: 12px;
+  }
+
+  .funding-insight {
+    align-items: flex-start;
+  }
+
+  .data-pipeline {
+    margin-top: 58px;
+    padding: 32px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .pipeline-intro h2 {
+    font-size: 2.2rem;
+  }
+
+  .pipeline-step {
+    padding: 22px;
+  }
+
+  .pipeline-platform {
+    padding: 17px;
+  }
+
+  .about-principle {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .about-banner {
+    padding: 24px;
+  }
+
+  .footer-inner {
+    padding-top: 42px;
+  }
+
+  .footer-navigation {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 20px;
   }
 }
