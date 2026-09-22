@@ -144,22 +144,125 @@ The database enforces required fields, non-negative funding values, and duplicat
 
 ## REST API
 
-The Spring Boot backend exposes startup data through:
+The Spring Boot backend exposes startup data through a REST API.
+
+The API runs locally at:
 
 ```text
-GET /startups
+http://localhost:8080
 ```
 
-and supports validated startup creation through:
+### GET /startups
 
-```text
-POST /startups
-```
+Returns all startups currently stored in the database.
 
-Example:
+Example request:
 
 ```bash
 curl http://localhost:8080/startups
+```
+
+Example response:
+
+```json
+[
+  {
+    "id": 61,
+    "company": "Sycamore",
+    "country": "Nigeria",
+    "sector": "Fintech",
+    "funding": 5000000
+  },
+  {
+    "id": 62,
+    "company": "Flot",
+    "country": "Cote d'Ivoire",
+    "sector": "Mobility",
+    "funding": 109000
+  }
+]
+```
+
+A successful request returns HTTP `200 OK`.
+
+### Startup JSON Structure
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | Integer | Database-generated startup ID |
+| `company` | String | Startup company name |
+| `country` | String | Country of origin |
+| `sector` | String | Startup sector |
+| `funding` | Long | Funding amount |
+
+### POST /startups
+
+Creates a new startup. The `id` is generated automatically and does not need to be included in the request body.
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8080/startups \
+  -H "Content-Type: application/json" \
+  -d '{
+    "company": "Example Startup",
+    "country": "South Africa",
+    "sector": "FinTech",
+    "funding": 5000000
+  }'
+```
+
+Example request body:
+
+```json
+{
+  "company": "Example Startup",
+  "country": "South Africa",
+  "sector": "FinTech",
+  "funding": 5000000
+}
+```
+
+A successful POST request returns HTTP `200 OK` with the saved startup:
+
+```json
+{
+  "id": 4,
+  "company": "Example Startup",
+  "country": "South Africa",
+  "sector": "FinTech",
+  "funding": 5000000
+}
+```
+
+### Validation and Error Responses
+
+The API requires:
+
+- `company` to be non-blank
+- `country` to be non-blank
+- `sector` to be non-blank
+- `funding` to be provided
+- `funding` to be zero or greater
+
+Invalid startup data returns HTTP `400 Bad Request`:
+
+```json
+{
+  "status": 400,
+  "message": "Invalid startup data"
+}
+```
+
+API errors use the same `status` and `message` structure.
+
+Unexpected backend errors return HTTP `500 Internal Server Error`:
+
+```json
+{
+  "status": 500,
+  "message": "Unable to process request"
+}
 ```
 
 ## Dashboard
