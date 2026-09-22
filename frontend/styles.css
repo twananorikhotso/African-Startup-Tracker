@@ -1742,6 +1742,142 @@ tbody tr:last-child td {
   transform: translateX(3px);
 }
 
+/* Footer */
+
+.site-footer {
+  margin-top: 72px;
+  background: var(--color-forest-deep);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-inner {
+  width: min(calc(100% - 48px), var(--content-width));
+  margin: 0 auto;
+  padding: 54px 0 26px;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.2fr);
+  gap: 80px;
+  align-items: start;
+}
+
+.footer-brand {
+  max-width: 420px;
+}
+
+.footer-brand-link {
+  display: inline-flex;
+  gap: 13px;
+  align-items: center;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-brand-mark {
+  display: grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(213, 160, 33, 0.25);
+  border-radius: 12px;
+  background: rgba(213, 160, 33, 0.1);
+  color: var(--color-gold);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.footer-brand-link > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.footer-brand-link strong {
+  color: #ffffff;
+  font-size: 0.91rem;
+}
+
+.footer-brand-link small {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footer-brand > p {
+  max-width: 380px;
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.footer-navigation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-column-title {
+  margin-bottom: 6px;
+  color: #e5bd58 !important;
+  font-size: 0.63rem;
+  font-weight: 850 !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer-column a,
+.footer-column > span:not(.footer-column-title) {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.75rem;
+  font-weight: 550;
+}
+
+.footer-column a {
+  width: fit-content;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-column a:hover {
+  color: #ffffff;
+}
+
+.footer-divider {
+  height: 1px;
+  margin: 42px 0 22px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.footer-bottom {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.67rem;
+  line-height: 1.5;
+}
+
+.footer-data-note {
+  text-align: right;
+}
+
 /* Responsive layout */
 
 @media (max-width: 900px) {
