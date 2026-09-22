@@ -344,6 +344,146 @@
       </div>
     </div>
   </section>
+
+  <section class="data-pipeline" id="pipeline" aria-labelledby="pipeline-title">
+    <div class="pipeline-intro">
+      <div>
+        <p class="section-eyebrow">Data infrastructure</p>
+
+        <h2 id="pipeline-title">
+          From raw startup data
+          <span>to market intelligence.</span>
+        </h2>
+      </div>
+
+      <p>
+        African Startup Tracker uses an automated data pipeline to extract,
+        clean, validate, store, and serve startup information to the
+        intelligence dashboard.
+      </p>
+    </div>
+
+    <div class="pipeline-flow">
+      <article class="pipeline-step">
+        <div class="pipeline-step-number">01</div>
+
+        <div class="pipeline-step-icon" aria-hidden="true">↓</div>
+
+        <div>
+          <span>Ingestion</span>
+          <h3>Extract</h3>
+
+          <p>
+            Startup information is collected from configured data sources
+            through the Python ingestion layer.
+          </p>
+        </div>
+      </article>
+
+      <div class="pipeline-connector" aria-hidden="true">
+        <span>→</span>
+      </div>
+
+      <article class="pipeline-step">
+        <div class="pipeline-step-number">02</div>
+
+        <div class="pipeline-step-icon" aria-hidden="true">◇</div>
+
+        <div>
+          <span>Processing</span>
+          <h3>Transform</h3>
+
+          <p>
+            Records are normalized, validated, cleaned, and prepared before
+            entering the persistent data layer.
+          </p>
+        </div>
+      </article>
+
+      <div class="pipeline-connector" aria-hidden="true">
+        <span>→</span>
+      </div>
+
+      <article class="pipeline-step">
+        <div class="pipeline-step-number">03</div>
+
+        <div class="pipeline-step-icon" aria-hidden="true">↧</div>
+
+        <div>
+          <span>Persistence</span>
+          <h3>Load</h3>
+
+          <p>
+            Valid startup records are written using duplicate-safe loading
+            logic to protect data quality.
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <div class="pipeline-platform">
+      <div class="platform-node">
+        <span class="platform-node-label">Database</span>
+
+        <div class="platform-node-heading">
+          <span class="platform-icon" aria-hidden="true">DB</span>
+
+          <div>
+            <h3>PostgreSQL</h3>
+            <p>Structured startup storage</p>
+          </div>
+        </div>
+      </div>
+
+      <span class="platform-arrow" aria-hidden="true">→</span>
+
+      <div class="platform-node">
+        <span class="platform-node-label">Application layer</span>
+
+        <div class="platform-node-heading">
+          <span class="platform-icon" aria-hidden="true">API</span>
+
+          <div>
+            <h3>Spring Boot</h3>
+            <p>REST API and validation</p>
+          </div>
+        </div>
+      </div>
+
+      <span class="platform-arrow" aria-hidden="true">→</span>
+
+      <div class="platform-node">
+        <span class="platform-node-label">Intelligence layer</span>
+
+        <div class="platform-node-heading">
+          <span class="platform-icon" aria-hidden="true">UI</span>
+
+          <div>
+            <h3>Dashboard</h3>
+            <p>Search, metrics and analytics</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-footer">
+      <div class="pipeline-status">
+        <span></span>
+
+        <div>
+          <strong>Automated ingestion</strong>
+          <p>Scheduled ETL execution keeps the data workflow repeatable.</p>
+        </div>
+      </div>
+
+      <div class="pipeline-tech">
+        <span>Python</span>
+        <span>PostgreSQL</span>
+        <span>Spring Boot</span>
+        <span>Chart.js</span>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="app.js" defer></script>
