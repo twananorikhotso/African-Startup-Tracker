@@ -1,11 +1,11 @@
 from unittest.mock import MagicMock, patch
+
+import requests
+
 from ingestion.extract import (
     extract_startup_html,
     extract_startup_links,
 )
-import requests
-
-from ingestion.extract import extract_startup_html
 
 
 @patch("ingestion.extract.requests.get")
@@ -16,7 +16,9 @@ def test_extract_startup_html_returns_response_html(mock_get):
     response.raise_for_status.return_value = None
     mock_get.return_value = response
 
-    result = extract_startup_html("https://example.com/startups")
+    result = extract_startup_html(
+        "https://example.com/startups"
+    )
 
     assert result == "<html><body>Startup data</body></html>"
 
@@ -29,11 +31,16 @@ def test_extract_startup_html_returns_response_html(mock_get):
 
 @patch("ingestion.extract.requests.get")
 def test_extract_startup_html_handles_request_failure(mock_get):
-    mock_get.side_effect = requests.RequestException("Connection failed")
+    mock_get.side_effect = requests.RequestException(
+        "Connection failed"
+    )
 
-    result = extract_startup_html("https://example.com/startups")
+    result = extract_startup_html(
+        "https://example.com/startups"
+    )
 
     assert result is None
+
 
 def test_extract_startup_links_discovers_unique_profiles():
     html = """
@@ -49,11 +56,34 @@ def test_extract_startup_links_discovers_unique_profiles():
 
     links = extract_startup_links(
         html,
-        "https://au-startups.com/funding",
-        limit=10,
+        "https://au-startups.com/startups",
+        limit=25,
     )
 
     assert links == [
         "https://au-startups.com/startups/sycamore",
         "https://au-startups.com/startups/flot",
+    ]
+
+
+def test_extract_startup_links_skips_claim_route():
+    html = """
+    <html>
+        <body>
+            <a href="/startups/claim">Claim startup</a>
+            <a href="/startups/flutterwave">Flutterwave</a>
+            <a href="/startups/paystack">Paystack</a>
+        </body>
+    </html>
+    """
+
+    links = extract_startup_links(
+        html,
+        "https://au-startups.com/startups",
+        limit=25,
+    )
+
+    assert links == [
+        "https://au-startups.com/startups/flutterwave",
+        "https://au-startups.com/startups/paystack",
     ]

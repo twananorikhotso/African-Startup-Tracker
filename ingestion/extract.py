@@ -51,6 +51,9 @@ def extract_startup_links(
 
         startup_url = urljoin(base_url, href)
 
+        if startup_url.rstrip("/").endswith("/startups/claim"):
+            continue
+
         if startup_url in seen_urls:
             continue
 
