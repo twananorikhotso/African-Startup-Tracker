@@ -1,5 +1,21 @@
+# Python
 venv/
+.venv/
 __pycache__/
-.idea/
+*.py[cod]
+.pytest_cache/
+
+# Java / Maven
 target/
+
+# Environment / secrets
 .env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# Logs / temporary files
+*.log
+*.tmp
