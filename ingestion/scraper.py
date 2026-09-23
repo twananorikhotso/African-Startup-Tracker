@@ -54,7 +54,7 @@ def main() -> None:
     parser.add_argument(
         "--password",
         help="PostgreSQL password",
-        default="postgres",
+        required=True,
     )
 
     args = parser.parse_args()
