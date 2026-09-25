@@ -4,6 +4,8 @@ African Startup Ecosystem Tracker is a data engineering project that collects re
 
 The project uses a Python ETL pipeline to extract, clean, validate, and load startup data into PostgreSQL. A Spring Boot REST API exposes the processed data to a web dashboard for exploration and funding analysis.
 
+Watch video demo here: https://youtu.be/J28r4bXzSXI
+
 ## Features
 
 * Real African startup data ingestion
